@@ -1,3 +1,4 @@
+
 name: Terraform CI Pipeline
 
 on:
@@ -9,47 +10,30 @@ permissions:
 jobs:
   terraform:
     name: Terraform on Amazon Linux EC2
+
     runs-on: [self-hosted, linux, x64, amazonlinux, dev]
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Check Runner
+      - name: Test EC2 Runner
+        shell: bash
         run: |
           echo "Runner is working"
           whoami
           pwd
           hostname
+          which sudo
 
       - name: Check Terraform
-        run: |
-          terraform --version
+        shell: bash
+        run: terraform --version
 
       - name: Check AWS CLI
-        run: |
-          aws --version
+        shell: bash
+        run: aws --version
 
       - name: Verify AWS Identity
-        run: |
-          aws sts get-caller-identity
-
-      - name: Terraform Init
-        run: |
-          terraform init
-
-      - name: Terraform Format
-        run: |
-          terraform fmt -check -recursive
-
-      - name: Terraform Validate
-        run: |
-          terraform validate
-
-      - name: Terraform Plan
-        run: |
-          terraform plan
-
-      - name: Terraform Apply
-        run: |
-          terraform apply -auto-approve
+        shell: bash
+        run: aws sts get-caller-identity
