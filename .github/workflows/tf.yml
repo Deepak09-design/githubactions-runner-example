@@ -3,22 +3,53 @@ name: Terraform CI Pipeline
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   terraform:
-    runs-on: [self-hosted, amazonlinux, dev]
+    name: Terraform on Amazon Linux EC2
+    runs-on: [self-hosted, linux, x64, amazonlinux, dev]
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Check Runner
+        run: |
+          echo "Runner is working"
+          whoami
+          pwd
+          hostname
+
+      - name: Check Terraform
+        run: |
+          terraform --version
+
+      - name: Check AWS CLI
+        run: |
+          aws --version
+
+      - name: Verify AWS Identity
+        run: |
+          aws sts get-caller-identity
+
       - name: Terraform Init
-        run: terraform init
+        run: |
+          terraform init
+
+      - name: Terraform Format
+        run: |
+          terraform fmt -check -recursive
 
       - name: Terraform Validate
-        run: terraform validate
+        run: |
+          terraform validate
 
       - name: Terraform Plan
-        run: terraform plan
+        run: |
+          terraform plan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: |
+          terraform apply -auto-approve
